@@ -98,20 +98,16 @@ SIMPLE_JWT = {
 # Custom User Model
 AUTH_USER_MODEL = 'staff.User'
 
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'http://127.0.0.1:8000',
-    'http://172.16.32.87',
-    'http://172.16.32.87:80',
-]
-
 # CORS Settings
 CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for now
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React default port
     "http://127.0.0.1:3000",
+    "http://localhost",       # Docker frontend (port 80)
+    "http://localhost:80",    # Docker frontend explicit
+    "http://127.0.0.1",       # Docker frontend alt
+    "http://127.0.0.1:80",    # Docker frontend alt explicit
     "http://172.16.32.87",
     "http://172.16.32.87:80",
 ]
@@ -128,6 +124,10 @@ CORS_ALLOWED_METHODS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost",       # Docker frontend (port 80)
+    "http://localhost:80",    # Docker frontend explicit
+    "http://127.0.0.1",       # Docker frontend alt
+    "http://127.0.0.1:80",    # Docker frontend alt explicit
     "http://172.16.32.87",
     "http://172.16.32.87:80",
 ]

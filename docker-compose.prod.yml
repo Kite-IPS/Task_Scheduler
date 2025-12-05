@@ -22,7 +22,7 @@ services:
       context: ./Client
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: http://localhost:8000
+        VITE_API_URL: http://172.16.32.87:8000
     container_name: frontend
     restart: always
     ports:

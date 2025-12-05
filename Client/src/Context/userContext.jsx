@@ -111,23 +111,23 @@ const UserProvider = ({ children }) => {
         fetchUserProfile();
     }, [clearUser]); // Only depends on clearUser now, which is memoized
     
+    // Add debug logging to help trace auth issues
+    useEffect(() => {
+        if (user) {
+            console.debug('User context updated:', {
+                id: user.id,
+                email: user.email,
+                role: user.role,
+                isAuthenticated: !!user
+            });
+        }
+    }, [user]);
+    
     return (
         <UserContext.Provider value={{user, updateUser, clearUser, loading}}>
             {children}
         </UserContext.Provider>
     )
 }
-
-// Add debug logging to help trace auth issues
-useEffect(() => {
-    if (user) {
-        console.debug('User context updated:', {
-            id: user.id,
-            email: user.email,
-            role: user.role,
-            isAuthenticated: !!user
-        });
-    }
-}, [user]);
 
 export default UserProvider

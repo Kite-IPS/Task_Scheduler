@@ -23,11 +23,11 @@ const Header = () => {
                     <div className='flex items-center gap-2 sm:gap-3 md:gap-5 flex-wrap justify-end'>
                         {/* Show role on mobile at 14px; keep same on larger screens */}
                         <h2 className='text-[14px] sm:text-[16px] font-semibold text-white/80'>
-                            Role: <span className='text-white'>{user.role.charAt(0).toUpperCase() + user.role.slice(1)}</span>
+                            Role: <span className='text-white'>{user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : ''}</span>
                         </h2>
                         {/* Hide username on xs, show on sm+ */}
                         <h2 className='text-[14px] sm:text-[16px] font-semibold text-white/80'>
-                            Name: <span className='text-white'>{user.name.charAt(0).toUpperCase() + user.name.slice(1)}</span>
+                            Name: <span className='text-white'>{user.full_name ? user.full_name.charAt(0).toUpperCase() + user.full_name.slice(1) : ''}</span>
                         </h2>
                         <button 
                             className='px-3 sm:px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg flex items-center gap-1 cursor-pointer hover:bg-red-600 hover:border-red-500 transition-all duration-300 text-xs sm:text-sm font-medium flex-shrink-0 backdrop-blur-sm'
