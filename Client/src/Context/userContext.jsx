@@ -38,10 +38,9 @@ const loadUserFromStorage = () => {
 };
 
 const UserProvider = ({ children }) => {
-    // Try to load initial user state from localStorage
-    const initialUser = loadUserFromStorage();
-    const [user, setUser] = useState(initialUser);
-    const [loading, setLoading] = useState(!initialUser);
+    // Don't use localStorage user data initially - always verify with API first
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     // Use useCallback to memoize clearUser so it doesn't change on every render
     const clearUser = useCallback(() => {
@@ -74,18 +73,14 @@ const UserProvider = ({ children }) => {
             const accessToken = localStorage.getItem("token") || sessionStorage.getItem("token");
         
             if(!accessToken){
+                // No token - clear any stale userData and stop loading
+                localStorage.removeItem('userData');
                 setLoading(false);
                 return;
             }
 
             try {
                 axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-                
-                // If we already have user data in state from localStorage,
-                // use it immediately while we fetch fresh data from API
-                if (user) {
-                    setLoading(false);
-                }
                 
                 const response = await axiosInstance.get(API_PATH.AUTH.INFO);
                 

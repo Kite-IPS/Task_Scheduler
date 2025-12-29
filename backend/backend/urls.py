@@ -19,8 +19,21 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework_simplejwt.views import TokenRefreshView
+from django.http import JsonResponse
+
+def api_root(request):
+    return JsonResponse({
+        'message': 'Task Schedule API',
+        'endpoints': {
+            'admin': '/admin/',
+            'auth': '/api/auth/',
+            'api': '/api/',
+            'token_refresh': '/api/token/refresh/',
+        }
+    })
 
 urlpatterns = [
+    path('', api_root, name='api-root'),
     path('admin/', admin.site.urls),
     path('api/auth/', include('staff.urls')),
     path('api/', include('task.urls')),
