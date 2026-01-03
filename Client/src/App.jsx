@@ -35,8 +35,8 @@ const App = () => {
             <Route path='/hod/dashboard' element={<HodDashboard />} />
           </Route>
           
-          {/* Admin Routes */}
-          <Route element={<PrivateRoute allowedRoles={["Admin", "admin"]} />}>
+          {/* Admin Routes - Also accessible by Staff */}
+          <Route element={<PrivateRoute allowedRoles={["Admin", "admin", "Staff", "staff"]} />}>
             <Route path='/admin-panel/dashboard' element={<AdminDashboard />} />
             <Route path='/admin-panel/users' element={<Users />} />
           </Route>
@@ -47,8 +47,8 @@ const App = () => {
             <Route path='/faculty/assign' element={<Assignment />} />
           </Route>
 
-          {/* Admin Task Management Routes */}
-          <Route element={<PrivateRoute allowedRoles={["admin", "Admin"]} />}>
+          {/* Admin/Staff Task Management Routes */}
+          <Route element={<PrivateRoute allowedRoles={["admin", "Admin", "staff", "Staff"]} />}>
             <Route path='/admin-panel/tasks' element={<Assignment />} />
             <Route path='/admin-panel/create-task' element={<FacultyDashboard />} />
           </Route>
@@ -83,10 +83,8 @@ const Root = () => {
 
   if (userRole === 'hod') {
     return <Navigate to="/hod/dashboard" replace />;
-  } else if (userRole === 'admin') {
+  } else if (userRole === 'admin' || userRole === 'staff') {
     return <Navigate to="/admin-panel/dashboard" replace />;
-  } else if (userRole === 'staff') {
-    return <Navigate to="/faculty/dashboard" replace />;
   }
 
   // Fallback - unknown role, redirect to login

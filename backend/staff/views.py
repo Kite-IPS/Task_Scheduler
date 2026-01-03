@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 from .models import User
 from .serializers import UserSerializer, UserCreateSerializer, LoginSerializer
-from task.permissions import IsAdmin
+from task.permissions import IsAdmin, IsAdminOrStaff
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -56,9 +56,9 @@ def get_all_users(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAdmin])
+@permission_classes([IsAuthenticated, IsAdminOrStaff])
 def create_user(request):
-    """Admin: Create new user"""
+    """Admin/Staff: Create new user"""
     serializer = UserCreateSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = serializer.save()
@@ -69,9 +69,9 @@ def create_user(request):
 
 
 @api_view(['PUT'])
-@permission_classes([IsAuthenticated, IsAdmin])
+@permission_classes([IsAuthenticated, IsAdminOrStaff])
 def update_user(request, user_id):
-    """Admin: Update user"""
+    """Admin/Staff: Update user"""
     try:
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
@@ -99,9 +99,9 @@ def update_user(request, user_id):
 
 
 @api_view(['DELETE'])
-@permission_classes([IsAuthenticated, IsAdmin])
+@permission_classes([IsAuthenticated, IsAdminOrStaff])
 def delete_user(request, user_id):
-    """Admin: Delete user"""
+    """Admin/Staff: Delete user"""
     try:
         user = User.objects.get(id=user_id)
         user.delete()
@@ -114,9 +114,9 @@ def delete_user(request, user_id):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAdmin])
+@permission_classes([IsAuthenticated, IsAdminOrStaff])
 def reset_password(request, user_id):
-    """Admin: Reset own password only"""
+    """Admin/Staff: Reset own password only"""
     try:
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:

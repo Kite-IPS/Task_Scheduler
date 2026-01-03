@@ -114,7 +114,7 @@ const Login = () => {
       const userRole = user.role.toLowerCase();
       if (userRole === 'hod') {
         navigate('/hod/dashboard', { replace: true });
-      } else if (userRole === 'admin') {
+      } else if (userRole === 'admin' || userRole === 'staff') {
         navigate('/admin-panel/dashboard', { replace: true });
       } else if (userRole === 'faculty') {
         navigate('/faculty/dashboard', { replace: true });
@@ -213,13 +213,12 @@ const Login = () => {
         console.log(normalizedRole)
         if (normalizedRole === "hod") {
           navigate('/hod/dashboard', { replace: true });
-        } else if (normalizedRole === "admin") {
+        } else if (normalizedRole === "admin" || normalizedRole === "staff") {
           navigate('/admin-panel/dashboard', { replace: true });
         } else if (normalizedRole === "head of department") {
           navigate('/hod/dashboard', { replace: true });
-        } else if(normalizedRole === "staff"){
+        } else if(normalizedRole === "faculty"){
           navigate('/faculty/dashboard', { replace: true });
-          // setError('Error: Invalid Role');
         }
         else{
           setError('Error: Invalid Role');

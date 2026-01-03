@@ -9,7 +9,7 @@ import { UserContext } from "../../Context/userContext";
 const FacultyDashboard = () => {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
-  const isAdmin = user?.role === 'admin' || user?.is_superuser;
+  const isAdmin = user?.role === 'admin' || user?.role === 'staff' || user?.is_superuser;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [stats, setStats] = useState({
     total_task: 0,

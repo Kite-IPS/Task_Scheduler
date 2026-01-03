@@ -8,7 +8,7 @@ import { UserContext } from "../../Context/userContext"
 
 const Assignment = () => {
   const { user } = useContext(UserContext)
-  const isAdmin = user?.role === 'admin' || user?.is_superuser
+  const isAdmin = user?.role === 'admin' || user?.role === 'staff' || user?.is_superuser
   const [tasks, setTasks] = useState([])
   const [filteredTasks, setFilteredTasks] = useState([])
   const [searchTerm, setSearchTerm] = useState("")

@@ -307,12 +307,14 @@ const AdminDashboard = () => {
           >
             View Users <UsersRound className="w-4 h-4" />
           </button>
-          <button
-            className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-yellow-600 hover:border-yellow-500 text-white px-4 py-2 rounded-xl transition-all shadow-lg hover:scale-105 flex items-center justify-center gap-1 text-xs md:text-sm"
-            onClick={() => setIsResetPasswordModalOpen(true)}
-          >
-            <KeyRound className="w-4 h-4" /> Reset Password
-          </button>
+          {user?.role === 'admin' && (
+            <button
+              className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-yellow-600 hover:border-yellow-500 text-white px-4 py-2 rounded-xl transition-all shadow-lg hover:scale-105 flex items-center justify-center gap-1 text-xs md:text-sm"
+              onClick={() => setIsResetPasswordModalOpen(true)}
+            >
+              <KeyRound className="w-4 h-4" /> Reset Password
+            </button>
+          )}
           <button className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-red-600 hover:border-red-500 text-white px-4 py-2 rounded-xl transition-all shadow-lg hover:scale-105 flex items-center justify-center gap-1 text-xs md:text-sm"
           onClick={exportToExcel}
           >
