@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useContext } from "react"
-import { Plus, Edit, Trash2, X, Home, Eye, MessageSquarePlus } from "lucide-react"
+import { Plus, Edit, Trash2, X, Home, Eye, MessageSquarePlus, ChevronDown } from "lucide-react"
 import BaseLayout from "../../Components/Layouts/BaseLayout"
 import { useNavigate } from "react-router-dom"
 import axiosInstance from "../../Utils/axiosInstance"
@@ -42,6 +42,7 @@ const Assignment = () => {
   const [commentsLoading, setCommentsLoading] = useState(false);  // Loading state
   const [commentsModalOpen, setCommentsModalOpen] = useState(false);  // NEW: Modal state for comments
   const [selectedCommentTask, setSelectedCommentTask] = useState(null);  // Track task for comments modal
+  const [assigneeDropdownOpen, setAssigneeDropdownOpen] = useState(false);  // Dropdown state for assignee selection
 
   const statuses = [
     { code: "pending", name: "Pending" },
@@ -305,6 +306,7 @@ const Assignment = () => {
     })
     setDepartmentFilter("all")
     setSelectedTask(null)
+    setAssigneeDropdownOpen(false)  // Close assignee dropdown
   }
 
   const handleInputChange = (e) => {
@@ -1026,51 +1028,114 @@ const Assignment = () => {
                       Assignee(s) * {formData.assignee.length > 0 && `(${formData.assignee.length} selected)`}
                     </label>
 
-                    {/* Department Filter Dropdown */}
-                    <div className="mb-3">
-                      <select
-                        value={departmentFilter}
-                        onChange={(e) => setDepartmentFilter(e.target.value)}
-                        className="w-full border border-white/20 bg-white/5 backdrop-blur-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 text-white"
-                      >
-                        <option value="all" className="bg-gray-900">
-                          All Departments
-                        </option>
-                        {departments.map((dept) => (
-                          <option key={dept.code} value={dept.code} className="bg-gray-900">
-                            {dept.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    {/* Selected Assignees Tags */}
+                    {formData.assignee.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {formData.assignee.map((email) => {
+                          const selectedUser = users.find((u) => u.email === email)
+                          return (
+                            <span
+                              key={email}
+                              className="inline-flex items-center gap-1 bg-red-500/20 text-red-300 px-2 py-1 rounded-lg text-xs border border-red-500/30"
+                            >
+                              {selectedUser?.name || email}
+                              <button
+                                type="button"
+                                onClick={() => handleAssigneeToggle(email)}
+                                className="hover:text-white ml-1"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </span>
+                          )
+                        })}
+                      </div>
+                    )}
 
-                    <div className="max-h-40 overflow-y-auto border border-white/10 rounded-lg p-3 bg-white/5">
-                      {usersLoading ? (
-                        <p className="text-white/70 text-center py-2">Loading users...</p>
-                      ) : getFilteredUsers().length > 0 ? (
-                        getFilteredUsers().map((user) => (
-                          <label
-                            key={user.email}
-                            className="flex items-center gap-2 text-white/80 cursor-pointer hover:bg-white/10 px-2 py-1 rounded"
-                          >
-                            <input
-                              type="checkbox"
-                              checked={formData.assignee.includes(user.email)}
-                              onChange={() => handleAssigneeToggle(user.email)}
-                              className="accent-red-500"
-                            />
-                            <div className="flex items-center gap-2">
-                              <span className="text-base font-semibold">{user.name}</span>
-                              <p className="text-xs text-white/50">{user.email}</p>
-                            </div>
-                            <div className="ml-auto flex items-center gap-2">
-                            <span className="text-xs text-white/50">{(user.role[0].toUpperCase())+(user.role.substring(1,))}</span>
-                            <span className="text-xs text-white/50">{user.department}</span>
-                            </div>
-                          </label>
-                        ))
-                      ) : (
-                        <p className="text-white/60 text-center py-2">No users found in this department.</p>
+                    {/* Dropdown Container */}
+                    <div className="relative">
+                      {/* Dropdown Trigger Button */}
+                      <button
+                        type="button"
+                        onClick={() => setAssigneeDropdownOpen(!assigneeDropdownOpen)}
+                        className="w-full border border-white/20 bg-white/5 backdrop-blur-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 text-white flex items-center justify-between"
+                      >
+                        <span className="text-white/60">
+                          {formData.assignee.length === 0 ? "Select faculty members..." : `${formData.assignee.length} faculty selected`}
+                        </span>
+                        <ChevronDown className={`w-4 h-4 transition-transform ${assigneeDropdownOpen ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      {/* Dropdown Content */}
+                      {assigneeDropdownOpen && (
+                        <div className="absolute z-50 w-full mt-1 border border-white/20 bg-gray-900 backdrop-blur-md rounded-lg shadow-xl">
+                          {/* Department Filter inside Dropdown */}
+                          <div className="p-2 border-b border-white/10">
+                            <select
+                              value={departmentFilter}
+                              onChange={(e) => setDepartmentFilter(e.target.value)}
+                              className="w-full border border-white/20 bg-white/5 backdrop-blur-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 text-white text-sm"
+                            >
+                              <option value="all" className="bg-gray-900">
+                                All Departments
+                              </option>
+                              {departments.map((dept) => (
+                                <option key={dept.code} value={dept.code} className="bg-gray-900">
+                                  {dept.name}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Faculty List */}
+                          <div className="max-h-48 overflow-y-auto p-2">
+                            {usersLoading ? (
+                              <p className="text-white/70 text-center py-2">Loading users...</p>
+                            ) : getFilteredUsers().length > 0 ? (
+                              getFilteredUsers().map((user) => (
+                                <div
+                                  key={user.email}
+                                  onClick={() => handleAssigneeToggle(user.email)}
+                                  className={`flex items-center gap-2 text-white/80 cursor-pointer hover:bg-white/10 px-3 py-2 rounded-lg transition-colors ${
+                                    formData.assignee.includes(user.email) ? 'bg-red-500/20 border border-red-500/30' : ''
+                                  }`}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={formData.assignee.includes(user.email)}
+                                    onChange={() => {}}
+                                    className="accent-red-500 pointer-events-none"
+                                  />
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm font-semibold truncate">{user.name}</span>
+                                      <span className="text-xs px-1.5 py-0.5 bg-white/10 rounded text-white/60">
+                                        {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                                      </span>
+                                    </div>
+                                    <p className="text-xs text-white/50 truncate">{user.email}</p>
+                                  </div>
+                                  <span className="text-xs text-white/50 bg-white/5 px-2 py-1 rounded">
+                                    {user.department}
+                                  </span>
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-white/60 text-center py-2">No users found in this department.</p>
+                            )}
+                          </div>
+
+                          {/* Done Button */}
+                          <div className="p-2 border-t border-white/10">
+                            <button
+                              type="button"
+                              onClick={() => setAssigneeDropdownOpen(false)}
+                              className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-medium transition-colors"
+                            >
+                              Done
+                            </button>
+                          </div>
+                        </div>
                       )}
                     </div>
                   </div>
