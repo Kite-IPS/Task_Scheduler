@@ -41,10 +41,16 @@ const App = () => {
             <Route path='/admin-panel/users' element={<Users />} />
           </Route>
           
-          {/* Faculty Routes */}
-          <Route element={<PrivateRoute allowedRoles={["staff", "Staff"]} />}>
+          {/* Faculty Routes - Also accessible by Admin */}
+          <Route element={<PrivateRoute allowedRoles={["staff", "Staff", "admin", "Admin"]} />}>
             <Route path='/faculty/dashboard' element={<FacultyDashboard />} />
             <Route path='/faculty/assign' element={<Assignment />} />
+          </Route>
+
+          {/* Admin Task Management Routes */}
+          <Route element={<PrivateRoute allowedRoles={["admin", "Admin"]} />}>
+            <Route path='/admin-panel/tasks' element={<Assignment />} />
+            <Route path='/admin-panel/create-task' element={<FacultyDashboard />} />
           </Route>
         </Routes>
       </Router>

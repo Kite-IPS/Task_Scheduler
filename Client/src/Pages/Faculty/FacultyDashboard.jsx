@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import BaseLayout from '../../Components/Layouts/BaseLayout';
 import { Plus, Eye, House, Activity, X } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from "../../Utils/axiosInstance";
 import { API_PATH } from "../../Utils/apiPath";
+import { UserContext } from "../../Context/userContext";
 
 const FacultyDashboard = () => {
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
+  const isAdmin = user?.role === 'admin' || user?.is_superuser;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [stats, setStats] = useState({
     total_task: 0,
@@ -228,16 +231,16 @@ const FacultyDashboard = () => {
       <div className="flex gap-1 items-center my-4 w-[90%] md:w-[80%] mx-auto text-white/70">
         <button
           className="hover:text-red-400 cursor-pointer transition-colors"
-          onClick={() => navigate("/faculty/dashboard")}
+          onClick={() => navigate(isAdmin ? "/admin-panel/dashboard" : "/faculty/dashboard")}
         >
           <House />
         </button>
-        <span>{">"}</span>
+        <span>{">"}"</span>
         <button
           className="hover:text-red-400 cursor-pointer transition-colors"
-          onClick={() => navigate("/faculty/dashboard")}
+          onClick={() => navigate(isAdmin ? "/admin-panel/create-task" : "/faculty/dashboard")}
         >
-          Dashboard
+          {isAdmin ? "Create Task" : "Dashboard"}
         </button>
       </div>
 
@@ -275,7 +278,7 @@ const FacultyDashboard = () => {
           </button>
           <button
             className="w-auto bg-white/10 backdrop-blur-md border border-white/20 hover:bg-red-600 hover:border-red-500 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl flex items-center justify-center gap-3 transition-all font-medium text-base md:text-lg shadow-lg hover:shadow-xl hover:scale-105"
-            onClick={() => navigate("/faculty/assign")}
+            onClick={() => navigate(isAdmin ? "/admin-panel/tasks" : "/faculty/assign")}
           >
             <Eye className="w-5 h-5" />
             View All

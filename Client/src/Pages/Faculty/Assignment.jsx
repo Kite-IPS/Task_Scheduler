@@ -1,11 +1,14 @@
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useContext } from "react"
 import { Plus, Edit, Trash2, X, Home, Eye, MessageSquarePlus } from "lucide-react"
 import BaseLayout from "../../Components/Layouts/BaseLayout"
 import { useNavigate } from "react-router-dom"
 import axiosInstance from "../../Utils/axiosInstance"
 import { API_PATH } from "../../Utils/apiPath"
+import { UserContext } from "../../Context/userContext"
 
 const Assignment = () => {
+  const { user } = useContext(UserContext)
+  const isAdmin = user?.role === 'admin' || user?.is_superuser
   const [tasks, setTasks] = useState([])
   const [filteredTasks, setFilteredTasks] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
@@ -582,20 +585,23 @@ const Assignment = () => {
       <div className="w-[90%] md:w-[80%] mx-auto py-6">
         {/* Breadcrumb */}
         <div className="flex gap-1 items-center my-4 text-white/70">
-          <button className="hover:text-red-400 cursor-pointer transition-colors">
+          <button 
+            className="hover:text-red-400 cursor-pointer transition-colors"
+            onClick={() => navigate(isAdmin ? "/admin-panel/dashboard" : "/faculty/dashboard")}
+          >
             <Home size={20} />
           </button>
           <span>{">"}</span>
           <button
             className="hover:text-red-400 cursor-pointer transition-colors"
-            onClick={() => navigate("/faculty/dashboard")}
+            onClick={() => navigate(isAdmin ? "/admin-panel/dashboard" : "/faculty/dashboard")}
           >
             Dashboard
           </button>
           <span>{">"}</span>
           <button
             className="hover:text-red-400 cursor-pointer transition-colors"
-            onClick={() => navigate("/faculty/assign")}
+            onClick={() => navigate(isAdmin ? "/admin-panel/tasks" : "/faculty/assign")}
           >
             Task Management
           </button>

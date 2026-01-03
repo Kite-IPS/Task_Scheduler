@@ -1,6 +1,6 @@
 import BaseLayout from "../../Components/Layouts/BaseLayout";
 import Table from "../../Components/Admin/Table";
-import { Download, House, UsersRound, Eye, X, Activity } from "lucide-react";
+import { Download, House, UsersRound, Eye, X, Activity, List } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import axiosInstance from "../../Utils/axiosInstance";
@@ -252,14 +252,20 @@ const AdminDashboard = () => {
       </div>
       <div className="w-[90%] md:w-[80%] mx-auto my-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         <h1 className="text-xl md:text-2xl font-bold text-white">Tasks Table:</h1>
-        <div className="flex items-center gap-2 w-full md:w-auto">
+        <div className="flex items-center gap-2 w-full md:w-auto flex-wrap">
           <button
-            className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-red-600 hover:border-red-500 text-white px-4 py-2 rounded-xl transition-all shadow-lg hover:scale-105 flex items-center justify-center gap-1 text-xs md:text-sm w-1/2 md:w-auto"
+            className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-red-600 hover:border-red-500 text-white px-4 py-2 rounded-xl transition-all shadow-lg hover:scale-105 flex items-center justify-center gap-1 text-xs md:text-sm"
+            onClick={() => navigate("/admin-panel/tasks")}
+          >
+            <List className="w-4 h-4" /> Manage Tasks
+          </button>
+          <button
+            className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-red-600 hover:border-red-500 text-white px-4 py-2 rounded-xl transition-all shadow-lg hover:scale-105 flex items-center justify-center gap-1 text-xs md:text-sm"
             onClick={() => navigate("/admin-panel/users")}
           >
             View Users <UsersRound className="w-4 h-4" />
           </button>
-          <button className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-red-600 hover:border-red-500 text-white px-4 py-2 rounded-xl transition-all shadow-lg hover:scale-105 flex items-center justify-center gap-1 text-xs md:text-sm w-1/2 md:w-auto"
+          <button className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-red-600 hover:border-red-500 text-white px-4 py-2 rounded-xl transition-all shadow-lg hover:scale-105 flex items-center justify-center gap-1 text-xs md:text-sm"
           onClick={exportToExcel}
           >
             Export Data <Download className="w-4 h-4" />
