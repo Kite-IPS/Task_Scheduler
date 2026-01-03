@@ -1,13 +1,12 @@
 import BaseLayout from "../../Components/Layouts/BaseLayout";
 import Table from "../../Components/Admin/Table";
-import { Download, House, UsersRound, Eye, X, Activity, List } from "lucide-react";
+import { Download, House, UsersRound, Eye, X, Activity, List, KeyRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import axiosInstance from "../../Utils/axiosInstance";
 import { API_PATH } from "../../Utils/apiPath";
 import ExcelJS from 'exceljs';
 import { UserContext } from "../../Context/userContext";
-// import { data } from "../../DevSample/sample";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -23,6 +22,10 @@ const AdminDashboard = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [recentActivities, setRecentActivities] = useState([]);
   const [followComments, setFollowComments] = useState([]);
+  const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
   
   // Check if user is HOD or Admin - making sure admin sees comments
   const isHOD = user?.role === 'hod';
@@ -110,6 +113,45 @@ const AdminDashboard = () => {
   const closeViewModal = () => {
     setIsViewModalOpen(false);
     setSelectedTask(null);
+  };
+
+  // Reset Password Functions
+  const closeResetPasswordModal = () => {
+    setIsResetPasswordModalOpen(false);
+    setNewPassword("");
+    setConfirmPassword("");
+  };
+
+  const handleResetPassword = async () => {
+    if (!newPassword || !confirmPassword) {
+      alert("Please fill in both password fields");
+      return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    
+    if (newPassword.length < 6) {
+      alert("Password must be at least 6 characters long");
+      return;
+    }
+
+    setResetLoading(true);
+    try {
+      await axiosInstance.post(API_PATH.USER.RESET_PASSWORD(user.id), {
+        password: newPassword
+      });
+      
+      alert("Password reset successfully!");
+      closeResetPasswordModal();
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      alert(error.response?.data?.error || 'Failed to reset password. Please try again.');
+    } finally {
+      setResetLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -265,6 +307,12 @@ const AdminDashboard = () => {
           >
             View Users <UsersRound className="w-4 h-4" />
           </button>
+          <button
+            className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-yellow-600 hover:border-yellow-500 text-white px-4 py-2 rounded-xl transition-all shadow-lg hover:scale-105 flex items-center justify-center gap-1 text-xs md:text-sm"
+            onClick={() => setIsResetPasswordModalOpen(true)}
+          >
+            <KeyRound className="w-4 h-4" /> Reset Password
+          </button>
           <button className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-red-600 hover:border-red-500 text-white px-4 py-2 rounded-xl transition-all shadow-lg hover:scale-105 flex items-center justify-center gap-1 text-xs md:text-sm"
           onClick={exportToExcel}
           >
@@ -408,6 +456,89 @@ const AdminDashboard = () => {
                   </p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reset Password Modal */}
+      {isResetPasswordModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl w-[90%] md:w-[400px] p-6">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h2 className="text-xl font-bold text-white">Reset Your Password</h2>
+                <p className="text-sm text-white/60 mt-1">
+                  {user?.email}
+                </p>
+              </div>
+              <button
+                onClick={closeResetPasswordModal}
+                className="text-white/70 hover:text-white transition cursor-pointer"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-white/90 mb-1">
+                  New Password *
+                </label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full border border-white/20 bg-white/5 backdrop-blur-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 text-white placeholder-white/40"
+                  placeholder="Enter new password"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white/90 mb-1">
+                  Confirm Password *
+                </label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full border border-white/20 bg-white/5 backdrop-blur-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 text-white placeholder-white/40"
+                  placeholder="Confirm new password"
+                />
+              </div>
+
+              <p className="text-xs text-white/50">
+                Password must be at least 6 characters long.
+              </p>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={closeResetPasswordModal}
+                className="flex-1 px-4 py-2 border border-white/20 bg-white/5 rounded-lg hover:bg-white/10 transition font-medium text-white"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleResetPassword}
+                disabled={resetLoading}
+                className="flex-1 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {resetLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    Resetting...
+                  </>
+                ) : (
+                  <>
+                    <KeyRound size={16} />
+                    Reset Password
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>

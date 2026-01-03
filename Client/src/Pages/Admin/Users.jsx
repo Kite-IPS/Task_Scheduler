@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Plus, Edit, Eye, Trash2, X, Home } from "lucide-react";
+import { Plus, Edit, Trash2, X, Home } from "lucide-react";
 import BaseLayout from "../../Components/Layouts/BaseLayout";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../Utils/axiosInstance";
@@ -165,6 +165,34 @@ const Users = () => {
         alert(error.response?.data?.message || 'Failed to delete user. Please try again.');
       }
     }
+  };
+
+  // Role and department badge colors
+  const getRoleBadgeColor = (role) => {
+    const colors = {
+      admin: "bg-red-500/20 text-red-300 border-red-500/30",
+      staff: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+      hod: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+      faculty: "bg-green-500/20 text-green-300 border-green-500/30",
+    };
+    return colors[role] || "bg-gray-500/20 text-gray-300 border-gray-500/30";
+  };
+
+  const getDepartmentBadgeColor = (dept) => {
+    const colors = {
+      CSE: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+      IT: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
+      AIDS: "bg-pink-500/20 text-pink-300 border-pink-500/30",
+      MECH: "bg-orange-500/20 text-orange-300 border-orange-500/30",
+      ECE: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
+      AIML: "bg-teal-500/20 text-teal-300 border-teal-500/30",
+      CYS: "bg-rose-500/20 text-rose-300 border-rose-500/30",
+      RA: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+      OFFICE: "bg-slate-500/20 text-slate-300 border-slate-500/30",
+      IQSC: "bg-violet-500/20 text-violet-300 border-violet-500/30",
+      OTHERS: "bg-gray-500/20 text-gray-300 border-gray-500/30",
+    };
+    return colors[dept] || "bg-gray-500/20 text-gray-300 border-gray-500/30";
   };
 
   return (

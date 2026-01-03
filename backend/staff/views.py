@@ -111,3 +111,45 @@ def delete_user(request, user_id):
             {'error': 'User not found'},
             status=status.HTTP_404_NOT_FOUND
         )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def reset_password(request, user_id):
+    """Admin: Reset own password only"""
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response(
+            {'error': 'User not found'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    # Check if admin is resetting their own password
+    if request.user.id != user_id:
+        return Response(
+            {'error': 'You can only reset your own password'},
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    new_password = request.data.get('password')
+    
+    if not new_password:
+        return Response(
+            {'error': 'Password is required'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    if len(new_password) < 6:
+        return Response(
+            {'error': 'Password must be at least 6 characters long'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    user.set_password(new_password)
+    user.save()
+    
+    return Response({
+        'message': f'Password reset successfully for {user.email}',
+        'user': UserSerializer(user).data
+    })

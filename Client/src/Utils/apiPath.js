@@ -9,7 +9,8 @@ export const API_PATH = {
         ALL:'/api/auth/users/',
         UPDATE:(id)=>`/api/auth/users/${id}/update/`,
         DELETE:(id)=>`/api/auth/users/${id}/delete/`,
-        CREATE:'/api/auth/users/create/'
+        CREATE:'/api/auth/users/create/',
+        RESET_PASSWORD:(id)=>`/api/auth/users/${id}/reset-password/`
     },
     TASK:{
         DASHBOARD:'/api/dashboard/',
