@@ -102,11 +102,14 @@ const Users = () => {
   };
 
   const handleCreateUser = async () => {
+    // Password is required for all roles except faculty
+    const passwordRequired = formData.role.toLowerCase() !== 'faculty';
+    
     if (
       formData.name &&
       formData.role &&
       formData.email &&
-      formData.password
+      (passwordRequired ? formData.password : true)
     ) {
       try {
         const response = await axiosInstance.post(API_PATH.USER.CREATE, formData);
@@ -122,7 +125,7 @@ const Users = () => {
         alert(error.response?.data?.message || 'Failed to create user. Please try again.');
       }
     } else {
-      alert("Please fill all required fields (Name, Email, Role, and Password)");
+      alert(passwordRequired ? "Please fill all required fields (Name, Email, Role, and Password)" : "Please fill all required fields (Name, Email, and Role)");
     }
   };
 
@@ -439,16 +442,20 @@ const Users = () => {
               {modalMode === "create" && (
                 <div>
                   <label className="block text-sm font-medium text-white/90 mb-1">
-                    Password <span className="text-red-400">*</span>
+                    Password {formData.role.toLowerCase() !== 'faculty' && <span className="text-red-400">*</span>}
                   </label>
-                  <input
-                    type="text"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className="w-full border border-white/20 bg-white/5 backdrop-blur-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 text-white placeholder-white/40"
-                    placeholder="Enter password"
-                  />
+                  {formData.role.toLowerCase() === 'faculty' ? (
+                    <p className="text-white/50 text-sm italic py-2">Faculty members don't require a password (they cannot login)</p>
+                  ) : (
+                    <input
+                      type="text"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      className="w-full border border-white/20 bg-white/5 backdrop-blur-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 text-white placeholder-white/40"
+                      placeholder="Enter password"
+                    />
+                  )}
                 </div>
               )}
 
