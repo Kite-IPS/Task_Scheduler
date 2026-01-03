@@ -427,13 +427,17 @@ def update_task(request, task_id):
                 'updated_fields': list(changes.keys()) if has_changes else []
             }
             
-            # NEW: Save comment to dedicated field
+            # Add follow_comment to details for consistent querying
+            if follow_comment:
+                history_details['follow_comment'] = follow_comment
+            
+            # Save to history
             TaskHistory.objects.create(
                 task=task,
                 action='updated',
                 performed_by=request.user,
                 details=history_details,
-                comment=follow_comment if follow_comment else None  # Direct to field
+                comment=follow_comment if follow_comment else None  # Also save to dedicated field
             )
             
             if follow_comment:
@@ -601,6 +605,8 @@ def get_task_comments(request, task_id):
 def get_all_follow_comments(request):
     """Get all follow-up comments across tasks with pagination"""
     try:
+        from django.db.models import Q
+        
         # Get pagination parameters
         page = int(request.GET.get('page', 1))
         page_size = int(request.GET.get('page_size', 20))
@@ -611,23 +617,29 @@ def get_all_follow_comments(request):
         
         user = request.user
         
+        # Query for comments - check both details JSONField and comment field
+        comment_filter = Q(details__follow_comment__isnull=False) | Q(comment__isnull=False)
+        
         # Filter based on role
         if user.role == 'admin' or user.is_superuser:
-            # Admin sees all follow comments
+            # Admin sees all follow comments from all users (admin and staff)
             query = TaskHistory.objects.filter(
-                action='updated',
-                details__follow_comment__isnull=False
-            )
+                action='updated'
+            ).filter(comment_filter)
+        elif user.role == 'staff':
+            # Staff sees all comments (same as admin)
+            query = TaskHistory.objects.filter(
+                action='updated'
+            ).filter(comment_filter)
         elif user.role == 'hod':
             # HODs do not see follow-up comments as per updated requirements
             query = TaskHistory.objects.none()
         else:
-            # Staff sees all comments assigned to them
+            # Faculty sees comments on tasks assigned to them
             query = TaskHistory.objects.filter(
                 action='updated',
-                details__follow_comment__isnull=False,
                 task__assignments__assignee=user
-            ).distinct()
+            ).filter(comment_filter).distinct()
             
         # Execute query with pagination
         total_count = query.count()
@@ -636,13 +648,19 @@ def get_all_follow_comments(request):
         # Format comments
         follow_comments = []
         for entry in history_entries:
-            if 'follow_comment' in entry.details:
+            # Get comment from either details or comment field
+            comment_text = entry.details.get('follow_comment') if entry.details else None
+            if not comment_text and entry.comment:
+                comment_text = entry.comment
+            
+            if comment_text:
                 follow_comments.append({
                     'id': entry.id,
                     'task_id': entry.task.id,
                     'task_title': entry.task.title,  # Include task title for context
-                    'comment': entry.details['follow_comment'],
+                    'comment': comment_text,
                     'performed_by': entry.performed_by.email if entry.performed_by else 'System',
+                    'performed_by_role': entry.performed_by.role if entry.performed_by else None,
                     'timestamp': entry.timestamp,
                 })
         
