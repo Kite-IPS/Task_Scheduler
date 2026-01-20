@@ -58,14 +58,21 @@ const Assignment = () => {
   ]
   const departments = [
     { code: "CSE", name: "CSE" },
-    { code: "ECE", name: "ECE" },
-    { code: "AIDS", name: "AIDS" },
-    { code: "CSBS", name: "CSBS" },
-    { code: "MECH", name: "MECH" },
     { code: "IT", name: "IT" },
-    { code: "CYS", name: "CYS" },
+    { code: "AIDS", name: "AIDS" },
+    { code: "MECH", name: "MECH" },
+    { code: "CSBS", name: "CSBS" },
+    { code: "S&H", name: "S&H" },
+    { code: "ECE", name: "ECE" },
     { code: "AIML", name: "AIML" },
-    { code: "RA", name: "R&A" },
+    { code: "CYS", name: "CYS" },
+    { code: "RA", name: "RA" },
+    { code: "OFFICE", name: "OFFICE" },
+    { code: "IQSC", name: "IQSC" },
+    { code: "OTHERS", name: "OTHERS" },
+    { code: "MBA", name: "MBA" },
+    { code: "INNOVATION TEAM", name: "INNOVATION TEAM" },
+    { code: "PLACEMENT", name: "PLACEMENT" },
   ]
 
   const navigate = useNavigate()
