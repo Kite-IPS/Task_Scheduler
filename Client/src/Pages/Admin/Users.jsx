@@ -26,7 +26,7 @@ const Users = () => {
   });
 
   const roles = ["admin", "staff", "hod", "faculty"];
-  const departments = ["CSE", "IT", "AIDS", "MECH", "ECE", "AIML", "CYS", "RA", "OFFICE", "IQSC", "OTHERS"];
+  const departments = ["CSE", "IT", "AIDS", "MECH","CSBS","S&H", "ECE", "AIML", "CYS", "RA", "OFFICE", "IQSC", "OTHERS","MBA","INNOATION TEAM","PLACEMENT"];
 
   const navigate = useNavigate();
 
@@ -50,8 +50,8 @@ const Users = () => {
     fetchUsers();
   }, []);
 
-  // Filter users
-  useMemo(() => {
+    // Filter users
+    useEffect(() => {
     let filtered = users.filter((user) => {
       const matchesSearch =
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
