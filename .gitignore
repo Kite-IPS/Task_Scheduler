@@ -38,6 +38,10 @@ local_settings.py
 # Static files
 /static
 
+# Backups
+backups/
+backup_*/
+
 # Unit test / coverage reports
 htmlcov/
 .tox/
