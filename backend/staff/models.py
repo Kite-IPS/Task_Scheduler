@@ -49,10 +49,10 @@ class User(AbstractUser):
         ('CYS', 'CyberSecurity'),
         ('OFFICE', 'Kite Office'),
         ('MBA', 'Master of Business Administration'),
-        ('Innovation', 'Innovation Team'),
-        ('Non-Teaching', 'Non-Teaching Staffs'),
-        ('Placement', 'Placement Department'),
-        ('R&A', 'Robotics & Automation'),
+        ('INNOVATION TEAM', 'Innovation Team'),
+        ('OTHERS', 'Non-Teaching Staffs'),
+        ('PLACEMENT', 'Placement Department'),
+        ('RA', 'Robotics & Automation'),
         ('S&H', 'Science & Humanities'),
         ('IQSC', 'iqsc')
     ]
